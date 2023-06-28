@@ -1,0 +1,508 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <canvas id="canvas" width="1500" height="900"></canvas>
+        <script>
+            const getImageFromBlog = async(blob) =>{
+                return await createImageBitmap(blob)
+            }
+            let image_list = [];
+            image_recived = false;
+            const images = {};
+            let connected = false;
+            var client_id = Date.now()
+            let checkForMotion = false;
+            var ws = new WebSocket(`ws://localhost:8001/ws/${client_id}`);
+            let waitingForData = false;
+            let waitTimer = 0;
+            let drawData = [];
+            let drawNonMove= [];
+            let screenTo = [];
+            let keyInput = [];
+            let isTyping = false;
+            let keyTyped = '';
+            let rightMovement = true;
+            let leftMovement = true;
+            let downMovement = true;
+            let upMovement = true;
+            let zoomMovement = true;
+            let testing = '';
+            let start_num = 0
+            ws.onmessage = async function(event) {
+                waitingForData = false;
+                waitTimer = 0;
+                if(!(connected)){
+                    if(!(image_recived)){
+                        image_recived = true;
+                        image_list = JSON.parse(JSON.parse(event.data));
+                        console.log(image_list)
+                    }
+                    else{
+                        i = image_list[start_num]
+                        images[i[0]] = await [await getImageFromBlog(event.data), i[1], i[2], i[3]];
+                        sendMessage('recived')
+                        if(start_num == image_list.length-1){
+                            connected = true;
+                            console.log(images)
+                            sendMessage('recived')
+
+                        } else{
+                            start_num++;
+                        }
+                    }
+
+                } else{
+                    const input = JSON.parse(event.data);
+
+                    console.log('data received');
+                    console.log(input);
+                    drawData = input.draw;
+                    drawNonMove = input.non_move;
+                    screenTo = input.screen_to;
+                    isTyping = input.is_typing;
+                    if(!(isTyping)){
+                        keyTyped = '';
+                    }
+                    if (keyInput != input.key_input){
+                        keyInput = input.key_input;
+                        if(keyInput.indexOf("right") != -1){
+                            rightMovement = true;
+                        } else {rightMovement = false;}
+                        if(keyInput.indexOf("up") != -1){
+                            upMovement = true;
+                        } else {upMovement = false;}
+                        if(keyInput.indexOf("left") != -1){
+                            leftMovement = true;
+                        } else {leftMovement = false;}
+                        if(keyInput.indexOf("down") != -1){
+                            downMovement = true;
+                        } else {downMovement = false;}
+                        if(keyInput.indexOf("m") != -1){
+                            zoomMovement = true;
+                        } else {zoomMovement = false;}
+                    }
+                }
+            }
+            function sendMessage(msg) {
+                console.log('Sending data')
+                ws.send(msg)
+                waitingForData = true;
+            }
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
+            document.addEventListener("mousemove", mouseMoveHandler, false);
+            document.addEventListener("click", mouseClickHandler, false)
+
+
+
+            let rightPressed = false;
+            let leftPressed = false;
+            let upPressed = false;
+            let downPressed = false;
+            let zoomInPressed = false;
+            let zoomOutPressed = false;
+            let mouseMotion = false;
+            let mouseClick = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            let screenX = 0;
+            let screenY = 0;
+            let screen_speed = 2;
+            let screenZoom = 1;
+            function keyDownHandler(e) {
+                if(isTyping){
+                    keyTyped = e.key
+                    //console.log(keyTyped);
+                } else{
+                    if((e.key == "Right" || e.key == "ArrowRight") && rightMovement) {
+                        rightPressed = true;
+                    } else if((e.key == "Left" || e.key == "ArrowLeft") && leftMovement) {
+                        leftPressed = true;
+                    } else if((e.key == "Up" || e.key == "ArrowUp") && upMovement) {
+                        upPressed = true;
+                    } else if((e.key == "Down" || e.key == "ArrowDown") && downMovement) {
+                        downPressed = true;
+                    } else if((e.key == "m") && zoomMovement){
+                        zoomInPressed = true;
+                    } else if((e.key == "n") && zoomMovement){
+                        zoomOutPressed = true;
+                    }
+                }
+
+            }
+
+            function keyUpHandler(e) {
+                if(e.key == "Right" || e.key == "ArrowRight") {
+                    rightPressed = false;
+                } else if(e.key == "Left" || e.key == "ArrowLeft") {
+                    leftPressed = false;
+                } else if(e.key == "Up" || e.key == "ArrowUp") {
+                    upPressed = false;
+                } else if(e.key == "Down" || e.key == "ArrowDown") {
+                    downPressed = false;
+                } else if((e.key == "m")){
+                    zoomInPressed = false;
+                } else if((e.key == "n")){
+                    zoomOutPressed = false;
+                }
+            }
+
+            function mouseMoveHandler(e){
+                mouseX = e.clientX - canvas.offsetLeft;
+                mouseY = e.clientY - canvas.offsetTop;
+                if(0<mouseX && 0<mouseY && canvas.width>mouseX && canvas.height>mouseY){
+                    mouseMotion = true;
+                }
+
+            }
+            function mouseClickHandler(e){
+                if(0<mouseX && 0<mouseY && canvas.width>mouseX && canvas.height>mouseY){
+                    mouseClick = true;
+                    console.log("click")
+                }
+            }
+
+            function update_screen(){
+                if(connected){
+                    if (waitingForData){
+                        waitTimer += 1;
+                        console.log(waitTimer);
+                    }
+                    if(rightPressed){
+                        screenX -= screen_speed;
+                    }
+                    if(upPressed){
+                        screenY += screen_speed;
+                    }
+                    if(downPressed){
+                        screenY -= screen_speed;
+                    }
+                    if(leftPressed){
+                        screenX += screen_speed;
+                    }
+                    if(zoomInPressed){
+                        screenZoom += .01
+                    } else if (zoomOutPressed){
+                        screenZoom -= .01
+                    }
+                    if((checkForMotion && mouseMotion)||mouseClick||keyTyped != ''){
+
+                        sendMessage(JSON.stringify(
+                            {CLICK:mouseClick, MOTION:mouseMotion, POS:[mouseX, mouseY],
+                            SCREENPOS:[screenX, screenY], ZOOM:screenZoom, TYPINGTEXT:keyTyped}
+                                    ));
+                        mouseMotion = false;
+                        mouseClick = false;
+                        keyTyped = '';
+                    }
+                }
+
+                if (screenTo.length == 2){
+                    screenX = screenTo[0]
+                    screenY = screenTo[1]
+                    screenZoom = 1
+                }
+                draw(drawData, true);
+                draw(drawNonMove, false);
+            }
+            setInterval(update_screen, 20);
+
+            function draw_rect(parameters, move) {
+                let rect = parameters[0];
+                let color = parameters[1];
+                let width = parameters[2];
+                let in_center = parameters[3];
+                const gradient = parameters[4];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+                    let x = 0;
+                    let y = 0;
+                    let tzoom = 1;
+                    let style = "rgba(" + color.join(', ') + ')';
+                    if (gradient.length > 0){
+                        console.log(gradient[1])
+                        style = ctx.createLinearGradient(gradient[0][0],gradient[0][1],gradient[0][2],gradient[0][3]);
+                        for (let c of gradient[1]){
+                            console.log(c);
+                            style.addColorStop(c[0], "rgba(" + c[1].join(', ') + ')' )
+                        }
+                    }
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    if (in_center){
+                        x -= rect[2]/2
+                        y -= rect[3]/2
+                    }
+                    if (!(width == 0)){
+                        ctx.lineWidth = width * tzoom;
+                        ctx.strokeStyle = style;
+                        ctx.strokeRect((rect[0] + x) * tzoom, (rect[1] + y) * tzoom, rect[2] * tzoom, rect[3] * tzoom);
+                    } else {
+
+                        ctx.fillStyle = style;
+                        ctx.fillRect((rect[0] + x) * tzoom, (rect[1] + y) * tzoom, rect[2] * tzoom, rect[3] * tzoom);
+
+                    }
+                }
+            }
+
+            function drawImage(parameters, move){
+                let name = parameters[0];
+                let image_info = images[name]
+                let imx = parameters[1];
+                let imy = parameters[2];
+                let zoom = parameters[3];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+                    let x = 0;
+                    let y = 0;
+                    let tzoom = 1;
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    ctx.drawImage(image_info[0], (imx + x + image_info[1] * zoom) * tzoom, (imy + y + image_info[2]* zoom) * tzoom,
+                    image_info[3] * zoom * tzoom,
+                    image_info[0].height / image_info[0].width * image_info[3] * zoom * tzoom);
+
+                }
+            }
+
+            function draw_ellipse(parameters, move){
+                const rect = parameters[0];
+                let color = parameters[1];
+                const width = parameters[2];
+                const gradient = parameters[3];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+                    let x = 0;
+                    let y = 0;
+                    let tzoom = 1;
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    let style = "rgba(" + color.join(', ') + ')';
+                    if (gradient.length > 0){
+                        console.log(gradient[1])
+                        style = ctx.createLinearGradient(gradient[0][0],gradient[0][1],gradient[0][2],gradient[0][3]);
+                        for (let c of gradient[1]){
+                            console.log(c);
+                            style.addColorStop(c[0], "rgba(" + c[1].join(', ') + ')' )
+                        }
+                    }
+                    ctx.beginPath();
+                    ctx.ellipse((rect[0] + x) * tzoom, (rect[1] + y) * tzoom, rect[2]/2 * tzoom, rect[3]/2 * tzoom, 0, 0, 2 * Math.PI)
+                    if (!(width == 0)){
+                        ctx.lineWidth = width * tzoom;
+                        ctx.strokeStyle = style;
+                        ctx.stroke();
+                    } else {
+                        ctx.fillStyle = style;
+                        ctx.fill();
+
+                    }
+                    ctx.closePath();
+
+
+                }
+            }
+
+            function draw_circle(parameters, move){
+                const center = parameters[0];
+                const radius = parameters[1]
+                let color = parameters[2];
+                const width = parameters[3];
+                const gradient = parameters[4];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+                    let x = 0;
+                    let y = 0;
+                    ctx.beginPath();
+                    let tzoom = 1;
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    let style = "rgba(" + color.join(', ') + ')';
+                    if (gradient.length > 0){
+                        console.log(gradient[1])
+                        style = ctx.createLinearGradient(gradient[0][0],gradient[0][1],gradient[0][2],gradient[0][3]);
+                        for (let c of gradient[1]){
+                            console.log(c);
+                            style.addColorStop(c[0], "rgba(" + c[1].join(', ') + ')' )
+                        }
+                    }
+                    ctx.arc((center[0] + x) * tzoom, (center[1] + y) * tzoom, radius * tzoom, 0, 2*Math.PI);
+                    if (!(width == 0)){
+                        ctx.lineWidth = width * tzoom;
+                        ctx.strokeStyle = style;
+                        ctx.stroke();
+                    } else {
+                        ctx.fillStyle = style;
+                        ctx.fill();
+
+                    }
+                    ctx.closePath();
+
+
+                }
+            }
+
+            function draw_text(parameters, move){
+                const txt = parameters[0];
+                const rect = parameters[1]
+                const color = parameters[2]
+                const backcolor = parameters[3]
+                const inCenter = parameters[4]
+                const fontStuff = parameters[5]
+                const gradient = parameters[6];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    if(backcolor != 0){
+                        draw_rect([rect, backcolor, 0, inCenter])
+                    }
+                    const ctx = canvas.getContext("2d");
+                    let x = 0;
+                    let y = 0;
+                    let tzoom = 1;
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    let style = "rgba(" + color.join(', ') + ')';
+                    if (gradient.length > 0){
+                        console.log(gradient[1])
+                        style = ctx.createLinearGradient(gradient[0][0],gradient[0][1],gradient[0][2],gradient[0][3]);
+                        for (let c of gradient[1]){
+                            console.log(c);
+                            style.addColorStop(c[0], "rgba(" + c[1].join(', ') + ')' )
+                        }
+                    }
+                    let font_size = (rect[3] - 2) * tzoom
+                    ctx.font = fontStuff[1] + fontStuff[0] + ' ' + (font_size).toString() +"px Arial";
+                    if(ctx.measureText(txt).width > (rect[2] * tzoom)){
+                        font_size *= (rect[2]/ctx.measureText(txt).width) * tzoom
+                        ctx.font = fontStuff[1] + fontStuff[0] + ' ' + (font_size).toString() +"px Arial";
+                    }
+                    ctx.fillStyle = style;
+
+                    if(inCenter == 'true'){
+                        ctx.textAlign = "center";
+                        ctx.fillText(txt, (rect[0] + x) * tzoom, (rect[1]+ (rect[3]-2)/2 - (rect[3]-2)*.29 + 1 + y) * tzoom);
+                    } else{
+                        ctx.textAlign = "left";
+                        ctx.fillText(txt, (rect[0] + x) * tzoom, (rect[1] + rect[3] + y) * tzoom);
+                    }
+                        //120 y val; 165 font px arial; 155 lower bound; 0 upper bound
+                }
+            }
+
+            function fillScreen(parameters){
+
+                const color = parameters[0]
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "rgba(" + color.join(', ') + ')';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            function draw_poly(parameters, move) {
+                let points = parameters[0];
+                let color = parameters[1];
+                let width = parameters[2];
+                const gradient = parameters[3];
+                const canvas = document.getElementById("canvas");
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+
+                    let x = 0;
+                    let y = 0;
+                    let tzoom = 1;
+                    if(move){
+                        x = screenX + 0;
+                        y = screenY + 0;
+                        tzoom = screenZoom
+                    }
+                    let style = "rgba(" + color.join(', ') + ')';
+                    if (gradient.length > 0){
+                        console.log(gradient[1])
+                        style = ctx.createLinearGradient(gradient[0][0],gradient[0][1],gradient[0][2],gradient[0][3]);
+                        for (let c of gradient[1]){
+                            console.log(c);
+                            style.addColorStop(c[0], "rgba(" + c[1].join(', ') + ')' )
+                        }
+                    }
+                    ctx.fillStyle = style;
+                    ctx.beginPath();
+                    for(let i of points){
+                        if (points.indexOf(i) == 0){
+
+                            ctx.moveTo((i[0] + x) * tzoom, (i[1] + y) * tzoom);
+                        } else{
+                            ctx.lineTo((i[0] + x) * tzoom, (i[1] + y) * tzoom);
+                        }
+                    }
+                    ctx.closePath();
+                    if (width == 0){
+                        ctx.fill();
+                    } else {
+                        ctx.lineWidth = width * tzoom;
+                        ctx.strokeStyle = style;
+                        ctx.stroke();
+                    }
+
+                }
+
+            }
+
+            function draw(drawobs, move) {
+                if (canvas.getContext) {
+                    const ctx = canvas.getContext("2d");
+
+                    if (drawobs.length > 0){
+                        for( let i of drawobs){
+                            if (i.type == "poly"){
+                                draw_poly(i.parameters, move)
+                            } else if(i.type == "rect") {
+                                draw_rect(i.parameters, move);
+                            } else if(i.type == "fill_screen"){
+                                fillScreen(i.parameters)
+                            } else if(i.type == "text"){
+                                draw_text(i.parameters, move)
+                            } else if(i.type == "image"){
+                                drawImage(i.parameters, move)
+                            } else if(i.type == "circle"){
+                                draw_circle(i.parameters, move)
+                            } else if(i.type == "ellipse"){
+                                draw_ellipse(i.parameters, move)
+                            }
+                        }
+
+                    }
+
+
+
+                }
+            }
+        </script>
+    </body>
+</html>
