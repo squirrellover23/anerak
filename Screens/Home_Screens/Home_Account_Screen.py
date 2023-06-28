@@ -7,3 +7,5 @@ class home_account_screen(home_screen_base_page):
         super().__init__(screen_width, screen_height, profile, user)
         self.highlight_page_on.width = 120
         self.highlight_page_on.x = 1290
+
+
