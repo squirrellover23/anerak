@@ -25,18 +25,20 @@ class player:
         self.ap = 2
         self.equipments = []
         self.runes = []
-        self.triggers = {}
+        self.before_triggers = {}
+        self.after_triggers = {}
+        self.effects = []
 
     def add_trigger(self, trigger_action, action_to_take):
         try:
-            self.triggers[trigger_action].append(action_to_take)
+            self.before_triggers[trigger_action].append(action_to_take)
         except KeyError:
-            self.triggers[trigger_action] = [action_to_take]
+            self.before_triggers[trigger_action] = [action_to_take]
 
     def take_action(self, action):
         action.execute(player)
         try:
-            for t in self.triggers[action]:
+            for t in self.before_triggers[action]:
                 t.execute(player)
         except KeyError:
             pass

@@ -21,6 +21,7 @@ class rect_button(button):
         self.width = rect_appearance.width
         self.height = rect_appearance.height
         self.alpha = 1
+        self.alpha = self.alpha
 
     def draw(self):
         if self.on:
