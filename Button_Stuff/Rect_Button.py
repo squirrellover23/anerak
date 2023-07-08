@@ -21,7 +21,8 @@ class rect_button(button):
         self.width = rect_appearance.width
         self.height = rect_appearance.height
         self.alpha = 1
-        self.alpha = self.alpha
+        self.text_width = self.width - 6
+        self.text_height = self.height - 2
 
     def draw(self):
         if self.on:
@@ -39,12 +40,12 @@ class rect_button(button):
             if len(self.text) > 0:
                 if self.in_center:
 
-                    draw.text(self.screen, self.x, self.y, self.text, self.width - 6, self.height - 2, self.text_color,
+                    draw.text(self.screen, self.x, self.y, self.text, self.text_width, self.text_height, self.text_color,
                               in_center=True, layer=self.layer)
                 else:
 
-                    draw.text(self.screen, self.x + self.width / 2, self.y + self.height / 2, self.text, self.width - 6,
-                              self.height - 2,
+                    draw.text(self.screen, self.x + self.width / 2, self.y + self.height / 2, self.text, self.text_width,
+                              self.text_height,
                               self.text_color, in_center=True, layer=self.layer)
 
     def check_if_mouse_is_on(self, x, y):
