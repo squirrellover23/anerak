@@ -1,4 +1,4 @@
-from Game_Elements.Deck import deck
+from Game_Elements.Decks.Deck import deck
 from Game_Elements.In_Game_Cards import in_game_card, in_game_relic
 from Profile import profile
 import random

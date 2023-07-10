@@ -1,5 +1,18 @@
 import colors
 
+'''
+Gradient Stuff for all draw functions goes as this
+[
+    (start_x, start_y, finish_x, finish_y),     
+    [
+        (0, color1),
+        any number of (int in range 0.0 - 1.0, color),
+        (1, color2)
+    ] 
+]
+
+'''
+
 
 def fill_window(screen, color):
     screen.draw_info.append([1, 'fill_screen', [list(color)]])

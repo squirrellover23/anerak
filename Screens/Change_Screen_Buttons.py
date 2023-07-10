@@ -7,8 +7,8 @@ circle_button_ap = circle_button_appearance(30, colors.light_blue, colors.hov_li
 
 
 class change_screen_button_rect(rect_button):
-    def __init__(self, screen_to, surface, x, y, text: str = '', in_center: bool = True, appearance: rect_button_appearance = blue_rect_bstyle):
-        super().__init__(surface, x, y, appearance, text, in_center)
+    def __init__(self, screen_to, surface, x, y, text: str = '', in_center: bool = True, appearance: rect_button_appearance = blue_rect_bstyle, has_gradient: bool = False):
+        super().__init__(surface, x, y, appearance, text, in_center, has_gradient=has_gradient)
         self.screen_to = screen_to
 
     def command(self):

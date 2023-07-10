@@ -1,3 +1,4 @@
+from Game_Elements.Decks.Precon_Decks import precon_deck
 
 
 class profile:
@@ -13,7 +14,8 @@ class profile:
         }
         self.games_played = 0
         self.elo = 1000
-        self.decks = []
+        self.decks = precon_deck.all_precons
+        self.incomplete_decks = []
         self.online_game_invites = []
         self.friends = []
         self.all_profiles.append(self)

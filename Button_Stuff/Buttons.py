@@ -2,7 +2,8 @@ import colors
 
 
 class button:
-    def __init__(self, screen, x, y,  norm_color, hov_color, text_color, text: str = '', text_under: str = '', dose_move: bool = False):
+    def __init__(self, screen, x, y, norm_color, hov_color, text_color, text: str = '', text_under: str = '',
+                 dose_move: bool = False):
         self.x = x
         self.y = y
         self.text = text
@@ -11,6 +12,7 @@ class button:
         self.normal_color = norm_color
         self.hovered_color = hov_color
         self.text_color = text_color
+        self.def_text_color = text_color
         self.color = self.normal_color
         self.layer = 2
         if dose_move:
@@ -25,6 +27,8 @@ class button:
         self.hov_change = False
         self.inactive_color = colors.black
         self.inactive_border_color = colors.grey
+        self.inactive_text_color = self.inactive_border_color
+
 
     def update_attributes(self, x_to: int = None, y_to: int = None, border_color=None, text: str = None,
                           text_color=None):
@@ -46,12 +50,16 @@ class button:
         if not self.active:
             self.color = self.inactive_color
             self.border_color = self.inactive_border_color
+            self.text_color = self.inactive_text_color
         elif self.hovered:
             self.color = self.hovered_color
             self.border_color = self.default_border_color
+            self.text_color = self.def_text_color
+
         else:
             self.color = self.normal_color
             self.border_color = self.default_border_color
+            self.text_color = self.def_text_color
 
     def check_if_mouse_is_on(self, x, y):
         self.hovered = False
@@ -83,6 +91,3 @@ class button:
 
     def command(self):
         pass
-
-
-
