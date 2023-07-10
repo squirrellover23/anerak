@@ -10,7 +10,7 @@ class login_screen(login_bar_screen):
         super().__init__(screen_width, screen_height, profile, user)
         self.text_on_screen.append(text_info('Login', screen_width / 2, 80, 300, 80, colors.white, True))
         self.text_on_screen.append(text_info('Don\'t have an Account?', screen_width / 2, screen_height / 2 + 210, 300, 90, colors.white, True))
-        self.buttons.append(change_screen_button_rect('home login', self, 20, screen_height - 70, 'Back', False))
+        self.buttons.append(change_screen_button_rect('start login', self, 20, screen_height - 70, 'Back', False))
         self.buttons.append(change_screen_button_rect('create account', self, screen_width / 2, screen_height / 2 + 300,
                                                       'Create Account', True))
         self.password_bar.stars_only = True

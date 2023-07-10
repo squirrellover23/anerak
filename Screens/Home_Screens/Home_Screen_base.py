@@ -23,4 +23,4 @@ class home_screen_base_page(screen):
         self.highlight_page_on = draw.rect_ob(colors.white, 230, 20, 100, 70, alpha=.2)
         self.rects += [draw.rect_ob(colors.black, 0, 20, screen_width, 70, gradient_stuff=[(0, 20, 0, 135), [(0, colors.black), (1, colors.light_grey)]]),
                        draw.poly_ob(colors.black, ((0, 20), (230, 20), (230, 90), (200, 120), (0, 120)), gradient_stuff=[(0, 20, 0, 135), [(0, colors.black), (1, colors.light_grey)]]), self.highlight_page_on]
-        self.buttons = [page_button('home base', self, 230, 20, 100, 'Home'), page_button('home games', self, 330, 20, 125, 'Games'), page_button('home decks', self, 455, 20, 125, 'Decks'), page_button('home account', self, 1300, 20, 100, 'Account')]
+        self.buttons = [page_button('home home', self, 230, 20, 100, 'Home'), page_button('home games', self, 330, 20, 125, 'Games'), page_button('home decks', self, 455, 20, 125, 'Decks'), page_button('home account', self, 1300, 20, 100, 'Account')]

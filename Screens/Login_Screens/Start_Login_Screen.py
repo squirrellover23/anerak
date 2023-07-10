@@ -13,7 +13,7 @@ class con_as_guest_b(rect_button):
         self.screen.user.change_profile()
 
 
-class home_login_screen(screen):
+class start_login_screen(screen):
     def __init__(self, screen_width: int, screen_height: int, profile, user):
         super().__init__(screen_width, screen_height, profile, [text_info('Welcome To Anerak', screen_width / 2, 100, screen_width - 200, 100, colors.white, True)], [
             change_screen_button_rect('login', self, screen_width / 2, 300, 'Login'),

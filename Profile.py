@@ -13,10 +13,11 @@ class profile:
         }
         self.games_played = 0
         self.elo = 1000
+        self.decks = []
         self.online_game_invites = []
         self.friends = []
         self.all_profiles.append(self)
-        self.default_screen = 'home base'
+        self.default_screen = 'home home'
 
     def try_login(self, username, password):
         for prof in self.all_profiles:
@@ -38,7 +39,7 @@ class profile:
 class login_prof(profile):
     def __init__(self):
         super().__init__('login', None)
-        self.default_screen = 'home login'
+        self.default_screen = 'start login'
 
 
 class guest_profile(profile):

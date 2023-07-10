@@ -9,7 +9,7 @@ class create_account_screen(login_bar_screen):
     def __init__(self, screen_width: int, screen_height: int, profile: profile, user):
         super().__init__(screen_width, screen_height, profile, user)
         self.buttons += [
-            change_screen_button_rect('home login', self, 20, screen_height - 70, 'Back', False),
+            change_screen_button_rect('start login', self, 20, screen_height - 70, 'Back', False),
             change_screen_button_rect('login', self, screen_width / 2, screen_height / 2 + 300,
                                       'Sign In', True)
         ]
