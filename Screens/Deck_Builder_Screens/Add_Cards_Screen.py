@@ -63,6 +63,8 @@ class add_cards_screen(page_screen):
 
     def icon_draw(self, icon):
         icon.stored_info.draw_card_icon(self, icon.x, icon.y, 200, 300)
+        if self.cards_added.count(icon.stored_info) > 0:
+            draw.rect(self, colors.black, icon.x, icon.y, icon.width, icon.height, alpha=.3)
 
     def select_card_type(self, card_type: card_type_button):
         self.selected_type.selected = False
@@ -73,3 +75,17 @@ class add_cards_screen(page_screen):
         if self.total_pages == 0:
             self.total_pages = 1
         self.change_page(0)
+
+    def add_card(self):
+        self.cards_added.append(self.selected_icon.stored_info)
+
+    def turn_off_info_bar(self):
+        pass
+
+    def turn_on_info_bar(self, selected_icon):
+        if self.cards_added.count(selected_icon.stored_info) > 0:
+            pass
+            # highlight card tab and pull up remove option
+        else:
+            pass
+            # add card button turns on
