@@ -2,7 +2,8 @@ from Screens.Account_Screens.Account_Info_Screen import account_info_screen
 from Screens.Account_Screens.Account_Settings_Screen import account_settings_screen
 from Screens.Account_Screens.Account_Social_Screen import account_social_screen
 from Screens.Account_Screens.Account_Stats_Screen import account_stats_screen
-from Screens.Deck_Builder_Screens.Create_New_Deck_Start import create_new_deck_start
+from Screens.Deck_Builder_Screens.Add_Cards_Screen import add_cards_screen
+from Screens.Deck_Builder_Screens.Select_Hero_Screen import select_hero_screen
 from Screens.Home_Screens.Home_Deck_Screen import home_deck_screen
 from Screens.Home_Screens.Home_Games_Screen import home_game_screen
 from Screens.Home_Screens.Home_Home_Screen import home_home_screen
@@ -38,8 +39,9 @@ def get_new_screen(screen_name, user):
     elif screen_name == 'edit deck':
         print('Make this exist')
         # return account_settings_screen(user.display_width, user.display_height, user.profile, user)
-    elif screen_name == 'create new deck start':
-        return create_new_deck_start(user.display_width, user.display_height, user.profile, user)
-
+    elif screen_name == 'select hero':
+        return select_hero_screen(user.display_width, user.display_height, user.profile, user)
+    elif screen_name == 'add cards':
+        return add_cards_screen(user.display_width, user.display_height, user.profile, user)
     else:
         print('No Screen Named', screen_name)

@@ -1,6 +1,7 @@
 import colors
 import draw
 from Button_Stuff.Rect_Button import rect_button_appearance, rect_button
+from Game_Elements.Decks.Deck import deck
 from Screens.Change_Screen_Buttons import change_screen_button_rect
 from Screens.Home_Screens.Home_Screen_base import home_screen_base_page
 from Profile import profile
@@ -23,8 +24,12 @@ class change_deck_page_button(rect_button):
 
 class create_new_deck_button(change_screen_button_rect):
     def __init__(self, screen):
-        super().__init__('create new deck start', screen, 10, 250, text='Create New Deck', in_center=False,
+        super().__init__('select hero', screen, 10, 250, text='Create New Deck', in_center=False,
                          appearance=new_deck_ap, has_gradient=True)
+
+    def command(self):
+        super().command()
+        self.screen.profile.deck_editing = deck()
 
 
 class view_deck_button(change_screen_button_rect):

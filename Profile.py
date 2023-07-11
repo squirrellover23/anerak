@@ -14,7 +14,8 @@ class profile:
         }
         self.games_played = 0
         self.elo = 1000
-        self.decks = precon_deck.all_precons
+        self.decks = precon_deck.all_precons + []
+        self.deck_editing = None
         self.incomplete_decks = []
         self.online_game_invites = []
         self.friends = []

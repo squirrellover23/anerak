@@ -71,9 +71,11 @@ class rect_ob:
         if gradient_stuff is None:
             gradient_stuff = []
         self.grad_stuff = gradient_stuff
+        self.on = True
 
     def draw(self, screen):
-        rect(screen, self.color, self.x, self.y, self.width, self.height, self.border_width, self.alpha, self.layer, self.in_center, self.grad_stuff)
+        if self.on:
+            rect(screen, self.color, self.x, self.y, self.width, self.height, self.border_width, self.alpha, self.layer, self.in_center, self.grad_stuff)
 
 
 def rect(screen, color, x, y, width, height, border_width: int = 0, alpha: float = 1, layer: int = 1,
@@ -95,9 +97,11 @@ class poly_ob:
         if gradient_stuff is None:
             gradient_stuff = []
         self.grad_stuff = gradient_stuff
+        self.on = True
 
     def draw(self, screen):
-        polygon(screen, self.color, self.points, self.width, self.alpha, self.layer, self.grad_stuff)
+        if self.on:
+            polygon(screen, self.color, self.points, self.width, self.alpha, self.layer, self.grad_stuff)
 
 
 def polygon(screen, color, points, width: int = 0, alpha: float = 1, layer: int = 1, gradient_stuff=None):

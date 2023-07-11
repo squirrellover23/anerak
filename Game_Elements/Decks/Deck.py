@@ -5,14 +5,15 @@ import draw
 class deck:
     def __init__(self):
         self.name = None
-        self.Hero = None
+        self.hero = None
         self.card_types = []
         self.cards = []
         self.relics = []
         self.complete = False
 
-    def add_hero(self):
-        pass
+    def add_hero(self, hero):
+        self.hero = hero
+        self.card_types = hero.card_types
 
     def show_deck_icon(self, screen, x, y):
         draw.rect(screen, colors.grey, x, y, 180, 200)
