@@ -5,7 +5,8 @@ class precon_deck(deck):
     all_precons = []
 
     def __init__(self, name):
-        super().__init__(name)
+        super().__init__()
+        self.name = name
         self.complete = True
         self.all_precons.append(self)
 

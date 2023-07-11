@@ -3,8 +3,8 @@ import draw
 
 
 class deck:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
+        self.name = None
         self.Hero = None
         self.card_types = []
         self.cards = []
